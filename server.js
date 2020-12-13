@@ -1,11 +1,11 @@
 const express = require('express');
 const cors = require('cors');
-const stripe = require('stripe')(
-  'sk_test_51Hxe1hB0apBhbVSw8tDAvuEeaBrT3s6AvCcqhJJJOmX3kzLZz8q7zdSnqUMaOFjrTZBtQN94Z5t8tGFD0kzrtzKO00fHlXJOCc',
-);
+const stripe = require('stripe')(process.env.STRIPE_KEY);
 const MongoClient = require('mongodb').MongoClient;
-const mongoUri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PW}@cluster0.ph0pk.mongodb.net/${process.env.MONGO_DB_NAME}?retryWrites=true&w=majority`;
-const client = new MongoClient(mongoUri, { useNewUrlParser: true });
+const client = new MongoClient(
+  `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PW}@cluster0.ph0pk.mongodb.net/${process.env.MONGO_DB_NAME}?retryWrites=true&w=majority`,
+  { useNewUrlParser: true },
+);
 const app = express();
 const PORT = Number(process.env.PORT);
 
@@ -22,6 +22,16 @@ client.connect(async (err) => {
       const snack_items = await snacks.find().toArray();
 
       res.json(snack_items);
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  app.get('/orders', async (req, res, next) => {
+    try {
+      const order_items = await orders.find().toArray();
+
+      res.json(order_items);
     } catch (e) {
       next(e);
     }
