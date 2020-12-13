@@ -29,9 +29,23 @@ client.connect(async (err) => {
 
   app.get('/orders', async (req, res, next) => {
     try {
-      const order_items = await orders.find().toArray();
+      const { userId } = req.query;
+      const userOrders = await orders.find({ userId }).toArray();
 
-      res.json(order_items);
+      res.json(userOrders);
+    } catch (e) {
+      next(e);
+    }
+  });
+
+  app.post('/orders', async (req, res, next) => {
+    const { order, user } = req.body;
+    const data = { ...order, userId: user.sub };
+
+    try {
+      const created = await orders.insertOne(data);
+
+      res.json(data);
     } catch (e) {
       next(e);
     }
