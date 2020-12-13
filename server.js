@@ -32,8 +32,6 @@ app.post('/create-payment-intent', async (req, res, next) => {
   const { items } = req.body;
   const amount = items.reduce((acc, item) => acc + Number(item.price_cents), 0);
 
-  console.log(amount);
-
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
